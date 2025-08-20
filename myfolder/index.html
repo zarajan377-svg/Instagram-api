@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Downloader</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: blue; color: white; text-align: center; padding: 20px; }
+    input { width: 300px; padding: 8px; margin: 10px; }
+    button { padding: 10px 20px; background: white; color: blue; border: none; cursor: pointer; }
+    video { margin-top: 20px; max-width: 90%; }
+  </style>
+</head>
+<body>
+  <h1>📥 Instagram Video Downloader</h1>
+  <input type="text" id="igUrl" placeholder="Enter Instagram URL" />
+  <button onclick="downloadVideo()">Download</button>
+  <div id="videoContainer"></div>
 
+  <script>
+    async function downloadVideo() {
+      const url = document.getElementById("igUrl").value;
+      if (!url.includes("instagram.com")) {
+        alert("❌ Please enter a valid Instagram URL");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/instagram?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+
+        if (!data.downloadUrl) {
+          document.getElementById("videoContainer").innerHTML = "<p>⚠️ Failed to fetch video</p>";
+          return;
+        }
+
+        document.getElementById("videoContainer").innerHTML = `
+          <video controls src="${data.downloadUrl}"></video>
+          <br>
+          <a href="${data.downloadUrl}" download>⬇ Download Video</a>
+        `;
+      } catch (e) {
+        document.getElementById("videoContainer").innerHTML = "<p>❌ Error fetching video</p>";
+      }
+    }
+  </script>
+</body>
+  </html>
