@@ -1,33 +1,26 @@
-const express = require("express");
-const fetch = require("node-fetch");
-const app = express();
+import express from "express";
+import fetch from "node-fetch";
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Home route (test karne ke liye)
 app.get("/", (req, res) => {
-  res.send("✅ Instagram API is running!");
+  res.send("Instagram API is live! Use endpoint: /api?postUrl=INSTAGRAM_LINK");
 });
 
-// ✅ API route: /api?url=INSTAGRAM_LINK
 app.get("/api", async (req, res) => {
-  const igUrl = req.query.url;
-  if (!igUrl) {
-    return res.status(400).json({ error: "Missing ?url=" });
-  }
+  const postUrl = req.query.postUrl;
+  if (!postUrl) return res.status(400).json({ error: "Missing postUrl param" });
 
   try {
     const response = await fetch(
-      "https://api.davidcyriltech.my.id/instagram?url=" + encodeURIComponent(igUrl)
+      `https://instavideodownloader-com.onrender.com/api/video?postUrl=${encodeURIComponent(postUrl)}`
     );
     const data = await response.json();
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch", details: err.message });
+    res.status(500).json({ error: "Failed to fetch from API", details: err.message });
   }
 });
 
-// ✅ Server listener
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
