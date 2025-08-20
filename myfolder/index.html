@@ -2,47 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Downloader</title>
+  <title>Instagram Video Downloader</title>
   <style>
-    body { font-family: Arial, sans-serif; background: blue; color: white; text-align: center; padding: 20px; }
-    input { width: 300px; padding: 8px; margin: 10px; }
-    button { padding: 10px 20px; background: white; color: blue; border: none; cursor: pointer; }
-    video { margin-top: 20px; max-width: 90%; }
+    body { background: #007bff; color: white; text-align: center; padding: 40px; font-family: Arial; }
+    input { width: 80%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+    button { padding: 10px 20px; border: none; border-radius: 5px; background: #28a745; color: white; cursor: pointer; }
+    video { margin-top: 20px; width: 80%; max-width: 500px; border-radius: 8px; }
   </style>
 </head>
 <body>
-  <h1>📥 Instagram Video Downloader</h1>
-  <input type="text" id="igUrl" placeholder="Enter Instagram URL" />
-  <button onclick="downloadVideo()">Download</button>
+  <h2>Instagram Video Downloader</h2>
+  <input type="text" id="igUrl" placeholder="Paste Instagram Reel/Post URL">
+  <button onclick="downloadVideo()">Fetch Video</button>
   <div id="videoContainer"></div>
-
   <script>
     async function downloadVideo() {
       const url = document.getElementById("igUrl").value;
-      if (!url.includes("instagram.com")) {
-        alert("❌ Please enter a valid Instagram URL");
-        return;
-      }
+      if (!url.includes("instagram.com")) return alert("Invalid Instagram URL!");
 
       try {
-        const res = await fetch(`/instagram?url=${encodeURIComponent(url)}`);
-        const data = await res.json();
-
-        if (!data.downloadUrl) {
-          document.getElementById("videoContainer").innerHTML = "<p>⚠️ Failed to fetch video</p>";
-          return;
+        const apiRes = await fetch(`/api?postUrl=${encodeURIComponent(url)}`);
+        const data = await apiRes.json();
+        if (data.videoUrl) {
+          document.getElementById("videoContainer").innerHTML = `
+            <video controls src="${data.videoUrl}"></video><br>
+            <a href="${data.videoUrl}" download><button>⬇ Download Video</button></a>`;
+        } else {
+          document.getElementById("videoContainer").innerText = "Failed to fetch video.";
         }
-
-        document.getElementById("videoContainer").innerHTML = `
-          <video controls src="${data.downloadUrl}"></video>
-          <br>
-          <a href="${data.downloadUrl}" download>⬇ Download Video</a>
-        `;
-      } catch (e) {
-        document.getElementById("videoContainer").innerHTML = "<p>❌ Error fetching video</p>";
+      } catch (err) {
+        document.getElementById("videoContainer").innerText = "Error occurred. Check console.";
+        console.error(err);
       }
     }
   </script>
 </body>
-  </html>
+</html
